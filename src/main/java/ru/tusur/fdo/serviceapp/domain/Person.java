@@ -1,9 +1,6 @@
 package ru.tusur.fdo.serviceapp.domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by schna_000 on 16.03.14.
@@ -20,7 +17,12 @@ public class Person {
 
     private Set<WorkSchedule> workSchedules;
 
-    private List<Contact> contacts = new ArrayList<Contact>();
+    private List<Contact> contacts;
+
+    public Person() {
+        workSchedules = new HashSet<>();
+        contacts = new ArrayList<>();
+    }
 
     public String getId() {
         return id;
@@ -53,5 +55,11 @@ public class Person {
     public void addContact(Contact contact) {
         contacts.add(contact);
     }
+
+    public void addSchedule(WorkSchedule schedule) {
+        workSchedules.add(schedule);
+    }
+
+
 
 }

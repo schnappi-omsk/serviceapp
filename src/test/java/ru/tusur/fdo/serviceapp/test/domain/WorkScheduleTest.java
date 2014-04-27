@@ -3,7 +3,6 @@ package ru.tusur.fdo.serviceapp.test.domain;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 import static java.time.Month.*;
 import static org.mockito.Mockito.*;
 
