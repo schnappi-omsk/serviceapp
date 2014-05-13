@@ -7,7 +7,7 @@ package ru.tusur.fdo.serviceapp.domain;
  */
 public enum RequestStatus {
 
-    NEW("New"), ASSIGNED("Assigned"), REJECTED("Rejected"), CLOSED("Closed"), FAILED("Failed");
+    NEW("New"), ASSIGNED("Assigned"), REJECTED("Rejected"), CLOSED("Closed"), COMPLETED("Resolved");
 
     private String text;
 

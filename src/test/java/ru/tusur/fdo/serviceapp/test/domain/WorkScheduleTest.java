@@ -26,9 +26,13 @@ public class WorkScheduleTest {
 
     private List<LocalDate> dates;
 
+    private Person employee;
+
     @Before
     public void setTestData() {
-        schedule = new WorkSchedule( mock(Person.class) );
+        employee = new Person();
+        schedule = new WorkSchedule( employee );
+        employee.addSchedule(schedule);
         dates = new ArrayList<LocalDate>();
         dates.add(LocalDate.of(2014, JANUARY, 13));
         dates.add(LocalDate.of(2014, JANUARY, 14));
@@ -65,6 +69,22 @@ public class WorkScheduleTest {
         for (LocalDate date : scheduleSet) {
             assertTrue(dateSet.contains(date));
         }
+    }
+
+    @Test
+    public void CheckPersonIsFreeOnDate() {
+        assertTrue(employee.isFreeOn(LocalDate.of(2014, JANUARY, 13)));
+        assertTrue(employee.isFreeOn(LocalDate.of(2014, JANUARY, 14)));
+        assertFalse(employee.isFreeOn(LocalDate.of(2014, JANUARY, 15)));
+        assertFalse(employee.isFreeOn(LocalDate.of(2014, JANUARY, 16)));
+    }
+
+    @Test
+    public void CheckPersonIsFreeAtTime() {
+        assertTrue(employee.isFreeOn(LocalDate.of(2014, JANUARY, 13), LocalTime.of(12, 00)));
+        assertTrue(employee.isFreeOn(LocalDate.of(2014, JANUARY, 14), LocalTime.of(14, 55)));
+        assertFalse(employee.isFreeOn(LocalDate.of(2014, JANUARY, 14), LocalTime.of(19, 00)));
+        assertFalse(employee.isFreeOn(LocalDate.of(2014, JANUARY, 15), LocalTime.of(13, 00)));
     }
 
 }

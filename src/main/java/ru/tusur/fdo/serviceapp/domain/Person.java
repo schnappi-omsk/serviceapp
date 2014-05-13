@@ -1,5 +1,7 @@
 package ru.tusur.fdo.serviceapp.domain;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 /**
@@ -20,8 +22,8 @@ public class Person {
     private List<Contact> contacts;
 
     public Person() {
-        workSchedules = new HashSet<>();
-        contacts = new ArrayList<>();
+        workSchedules = new HashSet<WorkSchedule>();
+        contacts = new ArrayList<Contact>();
     }
 
     public String getId() {
@@ -60,6 +62,20 @@ public class Person {
         workSchedules.add(schedule);
     }
 
+    public boolean isFreeOn(LocalDate date) {
+        for (WorkSchedule schedule : workSchedules) {
+            if (schedule.isWorkingDay(date)) return true;
+        }
+        return false;
+    }
 
+    public boolean isFreeOn(LocalDate date, LocalTime time) {
+        if (isFreeOn(date)) {
+            for (WorkSchedule schedule : workSchedules) {
+                if (schedule.isWorkingTime(date, time)) return true;
+            }
+        }
+        return false;
+    }
 
 }
