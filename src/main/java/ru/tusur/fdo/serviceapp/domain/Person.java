@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class Person {
 
-    private String id;
+    private int id;
 
     private String name;
 
@@ -26,11 +26,11 @@ public class Person {
         contacts = new ArrayList<Contact>();
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -52,6 +52,10 @@ public class Person {
 
     public List<Contact> contactList() {
         return Collections.unmodifiableList(contacts);
+    }
+
+    public Set<WorkSchedule> schedules() {
+        return Collections.unmodifiableSet(workSchedules);
     }
 
     public void addContact(Contact contact) {

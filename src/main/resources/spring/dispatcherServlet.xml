@@ -10,6 +10,7 @@
 
     <context:component-scan base-package="ru.tusur.fdo.serviceapp">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />
     </context:component-scan>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

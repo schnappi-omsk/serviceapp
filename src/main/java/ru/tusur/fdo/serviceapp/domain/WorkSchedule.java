@@ -13,10 +13,22 @@ import java.util.*;
  */
 public class WorkSchedule {
 
+    public static final LocalTime DEFAULT_START_TIME = LocalTime.of(8, 00);
+
+    public static final LocalTime DEFAULT_END_TIME = LocalTime.of(17,30);
+
     private Set<WorkingDay> workingDays;
 
     public WorkSchedule(Person employee) {
         workingDays = new HashSet<WorkingDay>();
+    }
+
+    public WorkSchedule() {
+        workingDays = new HashSet<WorkingDay>();
+    }
+
+    public void addWorkingDay(LocalDate day) {
+        addWorkingDay(day, DEFAULT_START_TIME, DEFAULT_END_TIME);
     }
 
     public void addWorkingDay(LocalDate day, LocalTime timeFrom, LocalTime timeTo) {

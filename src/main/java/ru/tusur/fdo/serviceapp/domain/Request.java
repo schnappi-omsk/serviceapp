@@ -126,7 +126,7 @@ public class Request {
     }
 
     public void assignTo(Person assignee) {
-        this.assignee = assignee;
+        setAssignee(assignee);
         this.status = RequestStatus.ASSIGNED;
     }
 
@@ -140,5 +140,13 @@ public class Request {
 
     public void reject() {
         this.status = RequestStatus.REJECTED;
+    }
+
+    public boolean closed() {
+        return status == RequestStatus.CLOSED || status == RequestStatus.COMPLETED || status == RequestStatus.REJECTED;
+    }
+
+    public boolean inWork() {
+        return status == RequestStatus.NEW || status == RequestStatus.ASSIGNED;
     }
 }
