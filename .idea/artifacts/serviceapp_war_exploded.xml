@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" name="serviceapp:war exploded">
+  <artifact type="exploded-war" build-on-make="true" name="serviceapp:war exploded">
     <output-path>$PROJECT_DIR$/target/serviceapp-0.1</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="serviceapp/web/Web" />
@@ -49,6 +49,7 @@
           <element id="library" level="project" name="Maven: net.sf.dozer:dozer:5.4.0" />
           <element id="library" level="project" name="Maven: commons-beanutils:commons-beanutils:1.8.3" />
           <element id="library" level="project" name="Maven: org.apache.commons:commons-lang3:3.1" />
+          <element id="library" level="project" name="Maven: com.oracle:ojdbc14:10.2.0.5.0" />
         </element>
       </element>
     </root>

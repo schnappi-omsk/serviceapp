@@ -1,5 +1,6 @@
 package ru.tusur.fdo.serviceapp.domain.service;
 
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.tusur.fdo.serviceapp.domain.Person;
@@ -23,6 +24,8 @@ public class ScheduleService {
     @Autowired
     private ScheduleRepository repository;
 
+    private DozerBeanMapper mapper = new DozerBeanMapper();
+
     public Collection<WorkSchedule> getEmployeeSchedules(Person employee) {
         List<ScheduleDTO> storedSchedules = repository.getByEmployee_Id(employee.getId());
         storedSchedules.forEach(s -> employee.addSchedule(mapSchedule(s)));
@@ -35,6 +38,10 @@ public class ScheduleService {
             schedule.addWorkingDay(date);
         }
         return schedule;
+    }
+
+    public void save(WorkSchedule schedule) {
+        repository.save(mapper.map(schedule, ScheduleDTO.class));
     }
 
 }
