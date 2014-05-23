@@ -2,15 +2,16 @@ package ru.tusur.fdo.serviceapp.view.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import ru.tusur.fdo.serviceapp.domain.Person;
+import ru.tusur.fdo.serviceapp.domain.service.ContactService;
 import ru.tusur.fdo.serviceapp.domain.service.PersonService;
+import ru.tusur.fdo.serviceapp.domain.service.ScheduleService;
+import ru.tusur.fdo.serviceapp.view.controller.pagebean.ContactBean;
 import ru.tusur.fdo.serviceapp.view.controller.pagebean.PersonBean;
+import ru.tusur.fdo.serviceapp.view.controller.pagebean.ScheduleBean;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,10 +28,15 @@ public class PersonController {
     @Autowired
     private PersonService service;
 
+    @Autowired
+    private ContactService contactService;
+
+    @Autowired
+    private ScheduleService scheduleService;
+
     @RequestMapping("/")
     public ModelAndView allEmployees() {
-        List<Person> employees = service.allEmployees();
-        return new ModelAndView("employeesList", "employees", employees);
+        return new ModelAndView("employeesList", "employees",  service.allEmployees());
     }
 
     @RequestMapping("/edit/{id}/")
@@ -43,17 +49,62 @@ public class PersonController {
             //TODO: implement logging
         }
         newEmployee &= personId == 0;
-        bean.setPersisted(newEmployee);
-        if (!newEmployee) {
+        bean.setPersisted(!newEmployee);
+        if (bean.isPersisted()) {
             bean.setPerson(service.getById(personId));
         }
         return new ModelAndView("employeeEdit", "personBean", bean);
     }
 
+    @RequestMapping(value = "/edit/{id}/addContact", method = RequestMethod.POST)
+    @ResponseBody
+    public ContactBean addContact(@ModelAttribute PersonBean personBean,
+                                  HttpServletRequest request,
+                                  @PathVariable int id) {
+        personBean.setPerson(service.getById(id));
+        ContactBean result = new ContactBean(request.getParameter("contactType"), request.getParameter("contactValue"));
+        personBean.getPerson().addContact(result.getContact());
+        contactService.saveContact(personBean.getPerson(), result.getContact());
+        return result;
+    }
+
+    @RequestMapping(value = "/edit/{id}/addSchedule", method = RequestMethod.POST)
+    @ResponseBody
+    public ScheduleBean addSchedule(@ModelAttribute PersonBean bean,
+                                    HttpServletRequest request,
+                                    @PathVariable int id) {
+        bean.setPerson(service.getById(id));
+        ScheduleBean result = new ScheduleBean(bean.getPerson(), request.getParameter("scheduleName"));
+        result.setSchedule(scheduleService.save(result.getSchedule(), bean.getPerson()));
+        return result;
+    }
+
+    @RequestMapping("/edit/{id}/schedule/new")
+    public ModelAndView editSchedule(@PathVariable int id, @ModelAttribute ScheduleBean bean) {
+        return editSchedule(id, 0, bean);
+    }
+
+    @RequestMapping("/edit/{id}/schedule/{scheduleId}/")
+    public ModelAndView editSchedule(@PathVariable int id,
+                                     @PathVariable int scheduleId,
+                                     @ModelAttribute ScheduleBean bean) {
+        boolean newSchedule = scheduleId == 0;
+        bean.setPersisted(!newSchedule);
+        if (bean.isPersisted()) {
+            bean.setSchedule(scheduleService.getOne(scheduleId));
+        }
+        return new ModelAndView("scheduleEdit", "scheduleBean", bean);
+    }
+
     @RequestMapping(value = "/save/", method = RequestMethod.POST)
     public ModelAndView save(@ModelAttribute PersonBean bean) {
-        service.save(bean.getPerson());
-        return new ModelAndView("redirect:/employee/");
+        bean.setPerson(service.save(bean.getPerson()));
+        return new ModelAndView(String.format("redirect:/employee/edit/%d/", bean.getPerson().getId()));
+    }
+
+    @RequestMapping(value = "/edit/{id}/schedule/{scheduleId}/save/", method = RequestMethod.POST)
+    public ModelAndView saveSchedule(@PathVariable int id) {
+        return new ModelAndView();
     }
 
 }

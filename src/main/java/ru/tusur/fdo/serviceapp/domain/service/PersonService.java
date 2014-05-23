@@ -1,8 +1,9 @@
 package ru.tusur.fdo.serviceapp.domain.service;
 
-import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.tusur.fdo.serviceapp.domain.Contact;
 import ru.tusur.fdo.serviceapp.domain.Person;
 import ru.tusur.fdo.serviceapp.domain.WorkSchedule;
 import ru.tusur.fdo.serviceapp.ds.dto.PersonDTO;
@@ -11,8 +12,8 @@ import ru.tusur.fdo.serviceapp.ds.repo.PersonRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * serviceapp
@@ -23,10 +24,14 @@ import java.util.List;
 @Service
 public class PersonService {
 
-    private DozerBeanMapper mapper = new DozerBeanMapper();
+    @Autowired
+    private Mapper mapper;
 
     @Autowired
     private ScheduleService scheduleService;
+
+    @Autowired
+    private ContactService contactService;
 
     @Autowired
     private PersonRepository repository;
@@ -43,7 +48,12 @@ public class PersonService {
     }
 
     public Person getById(int id) {
-        return mapper.map(repository.findOne(id), Person.class);
+        Person employee = mapper.map(repository.findOne(id), Person.class);
+        List<Contact> contacts = contactService.employeeContacts(employee);
+        contacts.forEach(employee::addContact);
+        Collection<WorkSchedule> schedules = scheduleService.getEmployeeSchedules(employee);
+        schedules.forEach(employee::addSchedule);
+        return employee;
     }
 
     public boolean isAvailableOn(Person employee, LocalDate date) {
@@ -51,8 +61,8 @@ public class PersonService {
         return employee.isFreeOn(date);
     }
 
-    public void save(Person employee) {
-        repository.save(mapper.map(employee, PersonDTO.class));
+    public Person save(Person employee) {
+        return mapper.map(repository.save(mapper.map(employee, PersonDTO.class)), Person.class);
     }
 
     public void remove(Person employee) {

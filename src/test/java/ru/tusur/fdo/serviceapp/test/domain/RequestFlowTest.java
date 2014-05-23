@@ -44,7 +44,7 @@ public class RequestFlowTest {
     @Test
     public void createRequestAndNotifyTest() {
 /*        Person employee = new Person();
-        employee.setName("John Doe");
+        employee.setFirstName("John Doe");
         Contact email = new Email();
         email.setValue("schnappi@xakep.ru");*/
     }

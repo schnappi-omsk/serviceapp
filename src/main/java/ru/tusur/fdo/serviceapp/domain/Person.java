@@ -13,11 +13,17 @@ public class Person {
 
     private int id;
 
-    private String name;
+    private String firstName;
+
+    private String middleName;
+
+    private String lastName;
 
     private Role role;
 
     private Set<WorkSchedule> workSchedules;
+
+    private String email;
 
     private List<Contact> contacts;
 
@@ -34,12 +40,12 @@ public class Person {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public Role getRole() {
@@ -50,11 +56,35 @@ public class Person {
         this.role = role;
     }
 
-    public List<Contact> contactList() {
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public List<Contact> getContacts() {
         return Collections.unmodifiableList(contacts);
     }
 
-    public Set<WorkSchedule> schedules() {
+    public Set<WorkSchedule> getWorkSchedules() {
         return Collections.unmodifiableSet(workSchedules);
     }
 

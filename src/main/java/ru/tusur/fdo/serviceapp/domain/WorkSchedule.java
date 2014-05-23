@@ -17,7 +17,11 @@ public class WorkSchedule {
 
     public static final LocalTime DEFAULT_END_TIME = LocalTime.of(17,30);
 
+    private int businessCode;
+
     private Set<WorkingDay> workingDays;
+
+    private String name;
 
     public WorkSchedule(Person employee) {
         workingDays = new HashSet<WorkingDay>();
@@ -25,6 +29,22 @@ public class WorkSchedule {
 
     public WorkSchedule() {
         workingDays = new HashSet<WorkingDay>();
+    }
+
+    public int getBusinessCode() {
+        return businessCode;
+    }
+
+    public void setBusinessCode(int code) {
+        this.businessCode = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void addWorkingDay(LocalDate day) {

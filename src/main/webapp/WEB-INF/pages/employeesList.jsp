@@ -14,7 +14,7 @@
         <c:forEach items="${employees}" var="person">
             <tr>
                 <td><c:out value="${person.id}"/></td>
-                <td><c:out value="${person.name}"/></td>
+                <td><c:out value="${person.firstName}"/></td>
             </tr>
         </c:forEach>
     </table>

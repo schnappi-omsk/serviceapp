@@ -7,6 +7,8 @@ package ru.tusur.fdo.serviceapp.domain;
  */
 public class Contact {
 
+    private int id;
+
     private String type;
 
     private String value;
@@ -25,6 +27,14 @@ public class Contact {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

@@ -2,6 +2,7 @@ package ru.tusur.fdo.serviceapp.ds.dto;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -18,8 +19,10 @@ public class ScheduleDTO {
     @GeneratedValue
     private int id;
 
-    @ElementCollection
-    private Set<LocalDate> workingDays;
+    private String name;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Date> workingDays;
 
     @ManyToOne
     private PersonDTO employee;
@@ -32,11 +35,19 @@ public class ScheduleDTO {
         this.id = id;
     }
 
-    public Set<LocalDate> getWorkingDays() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<Date> getWorkingDays() {
         return workingDays;
     }
 
-    public void setWorkingDays(Set<LocalDate> workingDays) {
+    public void setWorkingDays(Set<Date> workingDays) {
         this.workingDays = workingDays;
     }
 
