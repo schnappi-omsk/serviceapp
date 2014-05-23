@@ -4,12 +4,14 @@ import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tusur.fdo.serviceapp.domain.Person;
 import ru.tusur.fdo.serviceapp.domain.WorkSchedule;
 import ru.tusur.fdo.serviceapp.ds.dto.PersonDTO;
 import ru.tusur.fdo.serviceapp.ds.dto.ScheduleDTO;
 import ru.tusur.fdo.serviceapp.ds.repo.ScheduleRepository;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -56,15 +58,18 @@ public class ScheduleService {
 
     public WorkSchedule save(WorkSchedule schedule, Person employee) {
         ScheduleDTO dto = new ScheduleDTO();
-        Set<Date> dates = new HashSet<>();
-        for (LocalDate date : schedule.workingDates()) {
-            Date converted = new Date(date.toEpochDay());
-            dates.add(converted);
-        }
+        dto.setId(schedule.getBusinessCode());
         dto.setName(schedule.getName());
         dto.setEmployee(mapper.map(employee, PersonDTO.class));
+        Set<Date> dates = new HashSet<>();
+        for (LocalDate date : schedule.workingDates()) {
+            Instant instant = date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+            Date converted = Date.from(instant);
+            dates.add(converted);
+        }
         dto.setWorkingDays(dates);
         return mapSchedule(repository.save(dto));
     }
+
 
 }

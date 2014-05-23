@@ -12,13 +12,38 @@
         $(function(){
             $('#calendar').multiDatesPicker();
         });
+
+        //TODO: implement dates pick on page load
+
+        function retrieveDates() {
+            return $('#calendar').multiDatesPicker('getDates');
+        }
+
+        function sendDates() {
+            $.ajax({
+                type: "post",
+                url: 'add_dates',
+                data: {
+                    'dates' : retrieveDates()
+                },
+                success: function(response) {
+                    $("#msg").html(response.schedule.name + " saved");
+                },
+                error: function() {
+                    $("#msg").html("Cannot save schedule data.");
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
 
-    <c:out value="${scheduleBean.schedule.name}" />
+    <div id="msg"></div>
 
     <div id="calendar"></div>
+
+    <input type="button" value="Check dates" onclick="sendDates();" />
 
 </body>
 </html>

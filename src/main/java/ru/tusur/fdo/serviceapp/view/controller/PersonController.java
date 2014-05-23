@@ -12,6 +12,8 @@ import ru.tusur.fdo.serviceapp.view.controller.pagebean.PersonBean;
 import ru.tusur.fdo.serviceapp.view.controller.pagebean.ScheduleBean;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 
@@ -102,9 +104,20 @@ public class PersonController {
         return new ModelAndView(String.format("redirect:/employee/edit/%d/", bean.getPerson().getId()));
     }
 
-    @RequestMapping(value = "/edit/{id}/schedule/{scheduleId}/save/", method = RequestMethod.POST)
-    public ModelAndView saveSchedule(@PathVariable int id) {
-        return new ModelAndView();
+    @RequestMapping(value = "/edit/{id}/schedule/{scheduleId}/add_dates", method = RequestMethod.POST)
+    @ResponseBody
+    public ScheduleBean addDates(@PathVariable int id,
+                                 @PathVariable int scheduleId,
+                                 @ModelAttribute ScheduleBean bean,
+                                 HttpServletRequest request){
+        String[] dates = request.getParameterValues("dates[]");
+        bean.setSchedule(scheduleService.getOne(scheduleId));
+        for (String date : dates) {
+            LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            bean.getSchedule().addWorkingDay(localDate);
+        }
+        scheduleService.save(bean.getSchedule(), service.getById(id));
+        return bean;
     }
 
 }
