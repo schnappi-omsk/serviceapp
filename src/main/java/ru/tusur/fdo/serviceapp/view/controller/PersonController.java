@@ -7,6 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ru.tusur.fdo.serviceapp.domain.service.ContactService;
 import ru.tusur.fdo.serviceapp.domain.service.PersonService;
 import ru.tusur.fdo.serviceapp.domain.service.ScheduleService;
+import ru.tusur.fdo.serviceapp.util.DateUtils;
 import ru.tusur.fdo.serviceapp.view.controller.pagebean.ContactBean;
 import ru.tusur.fdo.serviceapp.view.controller.pagebean.PersonBean;
 import ru.tusur.fdo.serviceapp.view.controller.pagebean.ScheduleBean;
@@ -14,7 +15,9 @@ import ru.tusur.fdo.serviceapp.view.controller.pagebean.ScheduleBean;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -106,18 +109,33 @@ public class PersonController {
 
     @RequestMapping(value = "/edit/{id}/schedule/{scheduleId}/add_dates", method = RequestMethod.POST)
     @ResponseBody
-    public ScheduleBean addDates(@PathVariable int id,
+    public ScheduleBean updateDates(@PathVariable int id,
                                  @PathVariable int scheduleId,
                                  @ModelAttribute ScheduleBean bean,
                                  HttpServletRequest request){
         String[] dates = request.getParameterValues("dates[]");
         bean.setSchedule(scheduleService.getOne(scheduleId));
+        Collection<LocalDate> datesToUpdate = new HashSet<>();
         for (String date : dates) {
             LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-            bean.getSchedule().addWorkingDay(localDate);
+            datesToUpdate.add(localDate);
         }
+        bean.getSchedule().updateWorkingDays(datesToUpdate);
         scheduleService.save(bean.getSchedule(), service.getById(id));
         return bean;
+    }
+
+    @RequestMapping(value = "/edit/{id}/schedule/{scheduleId}/get_dates", method = RequestMethod.GET)
+    @ResponseBody
+    public Object[] getDates(@PathVariable int id,
+                                 @PathVariable int scheduleId,
+                                 @ModelAttribute ScheduleBean bean) {
+        bean.setSchedule(scheduleService.getOne(scheduleId));
+        List<String> dateList = new ArrayList<String>();
+        bean.getSchedule()
+                .workingDates()
+                .forEach(d -> dateList.add(DateUtils.stringFromLocalDate(d)));
+        return dateList.toArray();
     }
 
 }

@@ -20,6 +20,7 @@
         }
 
         function sendDates() {
+            $("#msg").html("Подождите...");
             $.ajax({
                 type: "post",
                 url: 'add_dates',
@@ -35,9 +36,24 @@
             });
         }
 
+        function receiveDates() {
+            $("#msg").html("Загрузка графика...");
+            $.ajax({
+                type: "get",
+                url: "get_dates",
+                success: function(response) {
+                    $('#calendar').multiDatesPicker('addDates', response);
+                    $('#msg').html("");
+                },
+                error: function() {
+                    $("#msg").html("Cannot receive dates");
+                }
+            });
+        }
+
     </script>
 </head>
-<body>
+<body onload="receiveDates();">
 
     <div id="msg"></div>
 

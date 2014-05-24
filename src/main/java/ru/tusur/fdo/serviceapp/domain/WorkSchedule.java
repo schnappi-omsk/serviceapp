@@ -51,6 +51,24 @@ public class WorkSchedule {
         addWorkingDay(day, DEFAULT_START_TIME, DEFAULT_END_TIME);
     }
 
+    public void updateWorkingDays(Collection<LocalDate> dates) {
+        for (LocalDate date : dates){
+            if (!workingDates().contains(date)) addWorkingDay(date);
+        }
+        for (LocalDate workingDay : workingDates()){
+            if (workingDates().contains(workingDay) && !dates.contains(workingDay))
+                removeWorkingDate(workingDay);
+        }
+    }
+
+    public void removeWorkingDate(LocalDate day){
+        WorkingDay workingDay = workingDays.stream()
+                .filter(p -> p.getDay().isEqual(day))
+                .findFirst()
+                .get();
+        workingDays.remove(workingDay);
+    }
+
     public void addWorkingDay(LocalDate day, LocalTime timeFrom, LocalTime timeTo) {
         workingDays.add(new WorkingDay(day, timeFrom, timeTo));
     }
