@@ -1,8 +1,16 @@
 package ru.tusur.fdo.serviceapp.domain.service;
 
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.tusur.fdo.serviceapp.domain.Person;
 import ru.tusur.fdo.serviceapp.domain.Request;
+import ru.tusur.fdo.serviceapp.ds.dto.PersonDTO;
+import ru.tusur.fdo.serviceapp.ds.dto.RequestDTO;
+import ru.tusur.fdo.serviceapp.ds.repo.RequestRepository;
+import ru.tusur.fdo.serviceapp.util.DateUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,31 +21,58 @@ import java.util.stream.Collectors;
  * by Oleg Alekseev
  * 01.04.14.
  */
+@Service
 public class RequestService {
 
+    @Autowired
+    private RequestRepository repository;
+
+    @Autowired
     private PersonService personService;
 
+    @Autowired
+    private Mapper mapper;
+
     public List<Request> allRequests() {
-        return null;
+        List<RequestDTO> storedRequests = repository.findAll();
+        List<Request> result = new ArrayList<>();
+        storedRequests.forEach(r -> result.add(mapRequest(r)));
+        return result;
     }
 
-    public Request get(Request request) {
-        return null;
-    }
-
-    public Request getById(String id) {
-        return null;
+    public Request getById(int id) {
+        return mapRequest(repository.findOne(id));
     }
 
     public void save(Request request) {
-
+        boolean newRecord = request.getId() == 0;
+        RequestDTO dto = newRecord ? new RequestDTO() : repository.findOne(request.getId());
+        dto.setTitle(request.getTitle());
+        dto.setDescription(request.getDescription());
+        dto.setCreationDate(DateUtils.sqlDateFromLocal(request.getCreationDate()));
+        dto.setTargetDate(DateUtils.sqlDateFromLocal(request.getTargetDate()));
+        dto.setDueDate(DateUtils.sqlDateFromLocal(request.getDueDate()));
+        dto.setAssignee(mapper.map(request.getAssignee(), PersonDTO.class));
     }
 
     public void remove(Request request) {
-
+        repository.delete(request.getId());
     }
 
     public List<Person> findFreeEmployees(Request request) {
-        return null;
+        return null; //TODO: implement method
     }
+
+    private Request mapRequest(RequestDTO dto) {
+        Request dest = new Request();
+        dest.setId(dto.getId());
+        dest.setCreationDate(DateUtils.localFromSqlDate(dto.getCreationDate()));
+        dest.setTargetDate(DateUtils.localFromSqlDate(dto.getTargetDate()));
+        dest.setDueDate(DateUtils.toLocalDate(dto.getDueDate()));
+        dest.setTitle(dto.getTitle());
+        Person employee = personService.getById(dto.getAssignee().getId());
+        dest.assignTo(employee);
+        return dest;
+    }
+
 }

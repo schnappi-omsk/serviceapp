@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class Request {
 
-    private Person requestor;
+    private int id;
 
     private String title;
 
@@ -37,16 +37,16 @@ public class Request {
         status = RequestStatus.NEW;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public RequestStatus getStatus() {
         return status;
-    }
-
-    public Person getRequestor() {
-        return requestor;
-    }
-
-    public void setRequestor(Person requestor) {
-        this.requestor = requestor;
     }
 
     public String getTitle() {

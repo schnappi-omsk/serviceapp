@@ -42,8 +42,10 @@ public class ScheduleService {
         WorkSchedule schedule = new WorkSchedule();
         schedule.setBusinessCode(dto.getId());
         schedule.setName(dto.getName());
-        for (Date date : dto.getWorkingDays()) {
-            schedule.addWorkingDay(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        if (dto.getWorkingDays() != null) {
+            for (Date date : dto.getWorkingDays()) {
+                schedule.addWorkingDay(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            }
         }
         return schedule;
     }
@@ -69,11 +71,13 @@ public class ScheduleService {
             if (added) dto.getWorkingDays().add(converted);
         }
         Set<Date> deletedDates = new HashSet<>();
-        for (Date date : dto.getWorkingDays()) {
-            boolean deleted = !schedule.isWorkingDay(DateUtils.toLocalDate(date));
-            if (deleted) deletedDates.add(date);
+        if (dto.getWorkingDays() != null) {
+            for (Date date : dto.getWorkingDays()) {
+                boolean deleted = !schedule.isWorkingDay(DateUtils.toLocalDate(date));
+                if (deleted) deletedDates.add(date);
+            }
+            deletedDates.stream().forEach(dto.getWorkingDays()::remove);
         }
-        deletedDates.stream().forEach(dto.getWorkingDays()::remove);
         return mapSchedule(repository.save(dto));
     }
 

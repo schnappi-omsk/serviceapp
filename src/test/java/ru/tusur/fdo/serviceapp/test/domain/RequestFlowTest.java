@@ -1,6 +1,9 @@
 package ru.tusur.fdo.serviceapp.test.domain;
 
 import static org.junit.Assert.*;
+
+import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.junit.Test;
 import ru.tusur.fdo.serviceapp.domain.Contact;
 import ru.tusur.fdo.serviceapp.domain.Person;

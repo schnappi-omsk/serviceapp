@@ -31,4 +31,13 @@ public class DateUtils {
         return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
+    public static LocalDate localFromSqlDate(java.sql.Date date){
+        Date mediator = new Date(date.getTime());
+        return toLocalDate(mediator);
+    }
+
+    public static java.sql.Date sqlDateFromLocal(LocalDate source){
+        return new java.sql.Date(fromLocalDate(source).getTime());
+    }
+
 }
