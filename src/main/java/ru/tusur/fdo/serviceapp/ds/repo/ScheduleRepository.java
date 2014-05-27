@@ -1,9 +1,13 @@
 package ru.tusur.fdo.serviceapp.ds.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import ru.tusur.fdo.serviceapp.ds.dto.PersonDTO;
 import ru.tusur.fdo.serviceapp.ds.dto.ScheduleDTO;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * serviceapp

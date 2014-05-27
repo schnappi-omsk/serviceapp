@@ -40,4 +40,8 @@ public class DateUtils {
         return new java.sql.Date(fromLocalDate(source).getTime());
     }
 
+    public static LocalDate localFromString(String source) {
+        return LocalDate.parse(source, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
 }

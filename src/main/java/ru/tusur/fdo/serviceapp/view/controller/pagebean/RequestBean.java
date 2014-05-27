@@ -1,6 +1,9 @@
 package ru.tusur.fdo.serviceapp.view.controller.pagebean;
 
+import ru.tusur.fdo.serviceapp.domain.Person;
 import ru.tusur.fdo.serviceapp.domain.Request;
+
+import java.util.Collection;
 
 /**
  * serviceapp
@@ -13,6 +16,28 @@ public class RequestBean {
     private Request request;
 
     private boolean persisted;
+
+    private String targetDate;
+
+    private String dueDate;
+
+    private Collection<Person> freeEmployees;
+
+    public String getTargetDate() {
+        return targetDate;
+    }
+
+    public void setTargetDate(String targetDate) {
+        this.targetDate = targetDate;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
 
     public Request getRequest() {
         return request;
@@ -30,4 +55,11 @@ public class RequestBean {
         this.persisted = persisted;
     }
 
+    public Collection<Person> getFreeEmployees() {
+        return freeEmployees;
+    }
+
+    public void setFreeEmployees(Collection<Person> freeEmployees) {
+        this.freeEmployees = freeEmployees;
+    }
 }

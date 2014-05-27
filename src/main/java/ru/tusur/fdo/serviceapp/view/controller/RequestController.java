@@ -2,13 +2,16 @@ package ru.tusur.fdo.serviceapp.view.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import ru.tusur.fdo.serviceapp.domain.service.PersonService;
 import ru.tusur.fdo.serviceapp.domain.service.RequestService;
+import ru.tusur.fdo.serviceapp.util.DateUtils;
+import ru.tusur.fdo.serviceapp.view.controller.pagebean.PersonBean;
 import ru.tusur.fdo.serviceapp.view.controller.pagebean.RequestBean;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 
 /**
  * serviceapp
@@ -22,6 +25,9 @@ public class RequestController {
 
     @Autowired
     private RequestService service;
+
+    @Autowired
+    private PersonService personService;
 
     @RequestMapping("/")
     public ModelAndView allRequests() {
@@ -39,13 +45,37 @@ public class RequestController {
         bean.setPersisted(!newRequest);
         if (bean.isPersisted()){
             bean.setRequest(service.getById(id));
+            bean.setTargetDate(DateUtils.stringFromLocalDate(bean.getRequest().getTargetDate()));
+            bean.setDueDate(DateUtils.stringFromLocalDate(bean.getRequest().getDueDate()));
         }
-        return new ModelAndView("requestEdit");
+        return new ModelAndView("requestEdit", "requestBean", bean);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ModelAndView saveRequest(@ModelAttribute RequestBean bean) {
+    public ModelAndView saveRequest(@ModelAttribute RequestBean bean, HttpServletRequest req) {
+        bean.getRequest().setTargetDate(DateUtils.localFromString(req.getParameter("targetDate")));
+        bean.getRequest().setDueDate(DateUtils.localFromString(req.getParameter("dueDate")));
+        bean.setRequest(service.save(bean.getRequest()));
         return new ModelAndView("requestEdit");
+    }
+
+    @RequestMapping("/**/free_employees/")
+    public ModelAndView freeEmployees(HttpServletRequest req,
+                                      @ModelAttribute RequestBean bean) {
+        LocalDate targetDate = DateUtils.localFromString(req.getParameter("targetDate"));
+        bean.setFreeEmployees(service.findFreeEmployees(targetDate));
+        return new ModelAndView("freeEmployees", "employeesList", bean.getFreeEmployees());
+    }
+
+    @RequestMapping(value = "/**/get_assignee/", method = RequestMethod.POST)
+    @ResponseBody
+    public PersonBean getEmployee(HttpServletRequest req,
+                                  @ModelAttribute RequestBean bean) {
+        int employeeId = Integer.parseInt(req.getParameter("employee_id"));
+        PersonBean result = new PersonBean();
+        result.setPerson(personService.getById(employeeId));
+        result.setPersisted(true);
+        return result;
     }
 
 }

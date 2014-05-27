@@ -1,9 +1,6 @@
 package ru.tusur.fdo.serviceapp.ds.dto;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
 
 /**
@@ -17,6 +14,7 @@ import java.sql.Date;
 public class RequestDTO {
 
     @Id
+    @GeneratedValue
     private int id;
 
     @ManyToOne

@@ -10,7 +10,9 @@ import ru.tusur.fdo.serviceapp.ds.dto.RequestDTO;
 import ru.tusur.fdo.serviceapp.ds.repo.RequestRepository;
 import ru.tusur.fdo.serviceapp.util.DateUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +33,9 @@ public class RequestService {
     private PersonService personService;
 
     @Autowired
+    private ScheduleService scheduleService;
+
+    @Autowired
     private Mapper mapper;
 
     public List<Request> allRequests() {
@@ -44,7 +49,7 @@ public class RequestService {
         return mapRequest(repository.findOne(id));
     }
 
-    public void save(Request request) {
+    public Request save(Request request) {
         boolean newRecord = request.getId() == 0;
         RequestDTO dto = newRecord ? new RequestDTO() : repository.findOne(request.getId());
         dto.setTitle(request.getTitle());
@@ -52,15 +57,17 @@ public class RequestService {
         dto.setCreationDate(DateUtils.sqlDateFromLocal(request.getCreationDate()));
         dto.setTargetDate(DateUtils.sqlDateFromLocal(request.getTargetDate()));
         dto.setDueDate(DateUtils.sqlDateFromLocal(request.getDueDate()));
-        dto.setAssignee(mapper.map(request.getAssignee(), PersonDTO.class));
+//        dto.setAssignee(mapper.map(request.getAssignee(), PersonDTO.class));
+//        dto.setStatus(request.getStatus().getText());
+        return mapRequest(repository.save(dto));
     }
 
     public void remove(Request request) {
         repository.delete(request.getId());
     }
 
-    public List<Person> findFreeEmployees(Request request) {
-        return null; //TODO: implement method
+    public Collection<Person> findFreeEmployees(LocalDate date) {
+        return scheduleService.freeEmployees(date);
     }
 
     private Request mapRequest(RequestDTO dto) {
@@ -70,8 +77,9 @@ public class RequestService {
         dest.setTargetDate(DateUtils.localFromSqlDate(dto.getTargetDate()));
         dest.setDueDate(DateUtils.toLocalDate(dto.getDueDate()));
         dest.setTitle(dto.getTitle());
-        Person employee = personService.getById(dto.getAssignee().getId());
-        dest.assignTo(employee);
+        dest.setDescription(dto.getDescription());
+//        Person employee = personService.getById(dto.getAssignee().getId());
+//        dest.assignTo(employee);
         return dest;
     }
 

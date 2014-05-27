@@ -7,6 +7,7 @@
 <body>
 
     <a href="<c:url value="/employee/" /> ">Сотрудники</a>
+    <a href="<c:url value="/request/new/" />">Завести заявку</a>
 
 </body>
 </html>

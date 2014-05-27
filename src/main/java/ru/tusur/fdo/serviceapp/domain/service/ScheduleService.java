@@ -30,24 +30,15 @@ public class ScheduleService {
     private ScheduleRepository repository;
 
     @Autowired
+    private PersonService personService;
+
+    @Autowired
     private Mapper mapper;
 
     public Collection<WorkSchedule> getEmployeeSchedules(Person employee) {
         List<ScheduleDTO> storedSchedules = repository.getByEmployee_Id(employee.getId());
         storedSchedules.forEach(s -> employee.addSchedule(mapSchedule(s)));
         return employee.getWorkSchedules();
-    }
-
-    private WorkSchedule mapSchedule(ScheduleDTO dto){
-        WorkSchedule schedule = new WorkSchedule();
-        schedule.setBusinessCode(dto.getId());
-        schedule.setName(dto.getName());
-        if (dto.getWorkingDays() != null) {
-            for (Date date : dto.getWorkingDays()) {
-                schedule.addWorkingDay(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-            }
-        }
-        return schedule;
     }
 
     public void addWorkingDay(LocalDate day, WorkSchedule schedule, Person employee) {
@@ -57,6 +48,19 @@ public class ScheduleService {
 
     public WorkSchedule getOne(int id) {
         return mapSchedule(repository.findOne(id));
+    }
+
+    public Collection<Person> freeEmployees(LocalDate date) {
+        List<ScheduleDTO> storedSchedules = repository.findAll();
+        Set<Person> employees = new HashSet<>();
+        for (ScheduleDTO scheduleDTO : storedSchedules) {
+            WorkSchedule schedule = mapSchedule(scheduleDTO);
+            if (schedule.isWorkingDay(date)) {
+                Person employee = personService.getById(scheduleDTO.getEmployee().getId());
+                employees.add(employee);
+            }
+        }
+        return employees;
     }
 
     public WorkSchedule save(WorkSchedule schedule, Person employee) {
@@ -81,5 +85,16 @@ public class ScheduleService {
         return mapSchedule(repository.save(dto));
     }
 
+    private WorkSchedule mapSchedule(ScheduleDTO dto){
+        WorkSchedule schedule = new WorkSchedule();
+        schedule.setBusinessCode(dto.getId());
+        schedule.setName(dto.getName());
+        if (dto.getWorkingDays() != null) {
+            for (Date date : dto.getWorkingDays()) {
+                schedule.addWorkingDay(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            }
+        }
+        return schedule;
+    }
 
 }
