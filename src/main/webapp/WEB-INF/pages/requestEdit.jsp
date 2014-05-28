@@ -4,8 +4,18 @@
 <html>
 <head>
     <title>Заявка на обслуживание ${requestBean.request.title}</title>
-    <script type="text/javascript" src="<c:url value="/resources/js/jquery-2.1.1.min.js" />"></script>
+    <link rel="stylesheet" href="<c:url value="/resources/css/calendar.css" /> " />
+    <script type="text/javascript" src="<c:url value="/resources/js/jquery-1.7.2.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/jquery.ui.core.js" /> "></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/jquery.ui.datepicker.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/jquery-ui.multidatespicker.js" />"></script>
     <script type="text/javascript">
+
+        $(function(){
+            var today = new Date();
+            $('#targetDate').datepicker({defaultDate: today});
+            $('#dueDate').datepicker({defaultDate: today});
+        });
 
         function employeesPopup(){
             $("#msg").html('Загрузка списка сотрудников...');
@@ -52,6 +62,10 @@
 
     <div id="msg"></div>
 
+    <input type="button" value="Отказать" />
+    <input type="button" value="Завершить" />
+    <input type="button" value="Закрыть" />
+
     <form:form commandName="requestBean" method="post" action="/request/save/">
 
         <form:hidden path="persisted" />
@@ -60,13 +74,13 @@
 
         Краткое описание<form:textarea path="request.description" /> <br />
 
-        Желаемая дата <form:input path="targetDate" id="targetDate" /> <br />
+        Желаемая дата <form:input path="targetDate" id="targetDate" readonly="true" /> <br />
 
-        Крайний срок <form:input path="dueDate" /> <br />
+        Крайний срок <form:input path="dueDate" id="dueDate" readonly="true" /> <br />
 
-        <input type="hidden" id="employee_id" />
+        <input type="hidden" id="employee_id" name="employee_id" />
 
-        Сотрудник <input type = "text" id="employee_name" disabled /> <input type="button" value="..." onclick="employeesPopup();"> <br />
+        Сотрудник <input type = "text" id="employee_name"  disabled /> <input type="button" value="..." onclick="employeesPopup();"> <br />
 
         <input type="submit" value="Сохранить" />
 

@@ -47,6 +47,9 @@ public class RequestController {
             bean.setRequest(service.getById(id));
             bean.setTargetDate(DateUtils.stringFromLocalDate(bean.getRequest().getTargetDate()));
             bean.setDueDate(DateUtils.stringFromLocalDate(bean.getRequest().getDueDate()));
+        } else {
+            bean.setTargetDate(DateUtils.stringFromLocalDate(LocalDate.now()));
+            bean.setDueDate(DateUtils.stringFromLocalDate(LocalDate.now()));
         }
         return new ModelAndView("requestEdit", "requestBean", bean);
     }
@@ -55,6 +58,8 @@ public class RequestController {
     public ModelAndView saveRequest(@ModelAttribute RequestBean bean, HttpServletRequest req) {
         bean.getRequest().setTargetDate(DateUtils.localFromString(req.getParameter("targetDate")));
         bean.getRequest().setDueDate(DateUtils.localFromString(req.getParameter("dueDate")));
+        int employeeId = Integer.parseInt(req.getParameter("employee_id"));
+        bean.getRequest().assignTo(personService.getById(employeeId));
         bean.setRequest(service.save(bean.getRequest()));
         return new ModelAndView("requestEdit");
     }

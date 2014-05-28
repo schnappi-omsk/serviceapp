@@ -78,7 +78,10 @@
         <form:hidden path="persisted" />
 
         ID <form:input path="person.id" readonly="true" /> <br />
+        Фамилия <form:input path="person.lastName"/> <br />
         Имя <form:input path="person.firstName" /> <br />
+        Отчество <form:input path="person.middleName" /> <br />
+        E-mail <form:input path="person.email" /> <br />
 
         <input type="submit" value="Сохранить" />
 

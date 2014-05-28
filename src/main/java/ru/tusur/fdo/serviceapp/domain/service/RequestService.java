@@ -57,8 +57,8 @@ public class RequestService {
         dto.setCreationDate(DateUtils.sqlDateFromLocal(request.getCreationDate()));
         dto.setTargetDate(DateUtils.sqlDateFromLocal(request.getTargetDate()));
         dto.setDueDate(DateUtils.sqlDateFromLocal(request.getDueDate()));
-//        dto.setAssignee(mapper.map(request.getAssignee(), PersonDTO.class));
-//        dto.setStatus(request.getStatus().getText());
+        dto.setAssignee(mapper.map(request.getAssignee(), PersonDTO.class));
+        dto.setStatus(request.getStatus().getText());
         return mapRequest(repository.save(dto));
     }
 
@@ -78,8 +78,8 @@ public class RequestService {
         dest.setDueDate(DateUtils.toLocalDate(dto.getDueDate()));
         dest.setTitle(dto.getTitle());
         dest.setDescription(dto.getDescription());
-//        Person employee = personService.getById(dto.getAssignee().getId());
-//        dest.assignTo(employee);
+        Person employee = personService.getById(dto.getAssignee().getId());
+        dest.assignTo(employee);
         return dest;
     }
 
