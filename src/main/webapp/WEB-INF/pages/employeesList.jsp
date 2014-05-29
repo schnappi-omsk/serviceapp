@@ -6,22 +6,29 @@
 </head>
 <body>
 
-    <table>
+    <table class="table table-hover">
         <tr>
             <td>ID</td>
             <td>Имя</td>
-            <td>E-mail</td>
+            <td>
+                E-mail
+                <a href="<c:url value="/employee/edit/new/"/>" class="btn btn-primary btn-xs pull-right">
+                    <span class="glyphicon glyphicon-plus"></span> Добавить
+                </a>
+            </td>
         </tr>
         <c:forEach items="${employees}" var="person">
             <tr>
                 <td><c:out value="${person.id}"/></td>
-                <td><a href="<c:url value="/employee/edit/${person.id}/" /> "><c:out value="${person.firstName}"/></a></td>
+                <td>
+                    <a href="<c:url value="/employee/edit/${person.id}/" /> ">
+                        <c:out value="${person.lastName} ${person.firstName} ${person.middleName}"/>
+                    </a>
+                </td>
                 <td><c:out value="${person.email}" /></td>
             </tr>
         </c:forEach>
     </table>
-
-    <a href="<c:url value="/employee/edit/new/"/>">Добавить</a>
 
 </body>
 </html>

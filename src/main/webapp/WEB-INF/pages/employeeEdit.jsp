@@ -73,17 +73,48 @@
 </head>
 <body>
 
-    <form:form commandName="personBean" action="/employee/save/" acceptCharset="UTF-8">
+    <form:form commandName="personBean" action="/employee/save/" acceptCharset="UTF-8" cssClass="form-horizontal">
 
         <form:hidden path="persisted" />
 
-        ID <form:input path="person.id" readonly="true" /> <br />
-        Фамилия <form:input path="person.lastName"/> <br />
-        Имя <form:input path="person.firstName" /> <br />
-        Отчество <form:input path="person.middleName" /> <br />
-        E-mail <form:input path="person.email" /> <br />
+        <div class="form-group">
+            <label for="person_id" class="col-sm-2 control-label">ID</label>
+            <div class="col-sm-10">
+                <form:input path="person.id" readonly="true" id="person_id" cssClass="form-control" />
+            </div>
+        </div>
 
-        <input type="submit" value="Сохранить" />
+        <div class="form-group">
+            <label for="person_last_name" class="col-sm-2 control-label">Фамилия</label>
+            <div class="col-sm-10">
+                <form:input path="person.lastName" id="person_last_name" cssClass="form-control"/>
+             </div>
+        </div>
+
+        <div class="form-group">
+            <label for="person_first_name" class="col-sm-2 control-label">Имя</label>
+            <div class="col-sm-10">
+                <form:input path="person.firstName" id="person_first_name" cssClass="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="person_middle_name" class="col-sm-2 control-label">Отчество</label>
+            <div class="col-sm-10">
+                <form:input path="person.middleName" id="person_middle_name" cssClass="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="person_email" class="col-sm-2 control-label">E-mail</label>
+            <div class="col-sm-10">
+                <form:input path="person.email" id="person_email" cssClass="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Сохранить" class="btn btn-primary"/>
+        </div>
 
     </form:form>
 
