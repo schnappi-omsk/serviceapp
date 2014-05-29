@@ -47,6 +47,8 @@ public class RequestController {
             bean.setRequest(service.getById(id));
             bean.setTargetDate(DateUtils.stringFromLocalDate(bean.getRequest().getTargetDate()));
             bean.setDueDate(DateUtils.stringFromLocalDate(bean.getRequest().getDueDate()));
+            bean.setClosed(bean.getRequest().closed());
+            bean.setAssignee(bean.getRequest().getAssignee().getId());
         } else {
             bean.setTargetDate(DateUtils.stringFromLocalDate(LocalDate.now()));
             bean.setDueDate(DateUtils.stringFromLocalDate(LocalDate.now()));
@@ -54,14 +56,22 @@ public class RequestController {
         return new ModelAndView("requestEdit", "requestBean", bean);
     }
 
+    @RequestMapping("/{id}/close")
+    public ModelAndView closeRequest(@PathVariable int id, @ModelAttribute RequestBean bean) {
+        bean.setRequest(service.getById(id));
+        service.closeRequest(bean.getRequest());
+        bean.setRequest(service.save(bean.getRequest()));
+        return editRequest(id, bean);
+    }
+
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ModelAndView saveRequest(@ModelAttribute RequestBean bean, HttpServletRequest req) {
         bean.getRequest().setTargetDate(DateUtils.localFromString(req.getParameter("targetDate")));
         bean.getRequest().setDueDate(DateUtils.localFromString(req.getParameter("dueDate")));
-        int employeeId = Integer.parseInt(req.getParameter("employee_id"));
+        int employeeId = Integer.parseInt(req.getParameter("assignee"));
         bean.getRequest().assignTo(personService.getById(employeeId));
         bean.setRequest(service.save(bean.getRequest()));
-        return new ModelAndView("requestEdit");
+        return new ModelAndView("requestEdit", "requestBean", bean);
     }
 
     @RequestMapping("/**/free_employees/")

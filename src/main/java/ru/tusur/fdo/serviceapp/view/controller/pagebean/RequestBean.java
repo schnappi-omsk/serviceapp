@@ -21,7 +21,27 @@ public class RequestBean {
 
     private String dueDate;
 
+    private boolean closed;
+
+    private int assignee;
+
     private Collection<Person> freeEmployees;
+
+    public int getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(int assignee) {
+        this.assignee = assignee;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
 
     public String getTargetDate() {
         return targetDate;

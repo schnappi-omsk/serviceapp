@@ -76,6 +76,7 @@
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-entitymanager:4.2.8.Final" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-test:4.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context-support:4.0.3.RELEASE" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet.jsp:jsp-api:2.1" level="project" />
     <orderEntry type="library" name="Maven: jstl:jstl:1.2" level="project" />
@@ -94,6 +95,8 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: javax.mail:mail:1.4.7" level="project" />
+    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
   </component>
 </module>
 

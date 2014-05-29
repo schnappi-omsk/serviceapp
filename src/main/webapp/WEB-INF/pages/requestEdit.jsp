@@ -8,13 +8,16 @@
     <script type="text/javascript" src="<c:url value="/resources/js/jquery-1.7.2.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/jquery.ui.core.js" /> "></script>
     <script type="text/javascript" src="<c:url value="/resources/js/jquery.ui.datepicker.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/resources/js/jquery-ui.multidatespicker.js" />"></script>
     <script type="text/javascript">
 
         $(function(){
             var today = new Date();
-            $('#targetDate').datepicker({defaultDate: today});
-            $('#dueDate').datepicker({defaultDate: today});
+            $('#targetDate').datepicker();
+            $('#dueDate').datepicker();
+            if ($('#employee_id').val() != 0) {
+                $('#employee_name').val('Загрузка...');
+                selectAssignee();
+            }
         });
 
         function employeesPopup(){
@@ -62,9 +65,10 @@
 
     <div id="msg"></div>
 
-    <input type="button" value="Отказать" />
-    <input type="button" value="Завершить" />
-    <input type="button" value="Закрыть" />
+    <input type="button" value="Отказать" <c:if test="${!requestBean.closed}">disabled="disabled" </c:if> />
+    <input type="button" value="Завершить" <c:if test="${!requestBean.closed}">disabled="disabled" </c:if>/>
+    <input type="button" value="Закрыть" <c:if test="${!requestBean.closed}">disabled="disabled" </c:if>/>
+    <input type="button" value="Открыть" <c:if test="${requestBean.closed}">disabled="disabled" </c:if>/>
 
     <form:form commandName="requestBean" method="post" action="/request/save/">
 
@@ -78,7 +82,7 @@
 
         Крайний срок <form:input path="dueDate" id="dueDate" readonly="true" /> <br />
 
-        <input type="hidden" id="employee_id" name="employee_id" />
+        <form:hidden path="assignee" id="employee_id" />
 
         Сотрудник <input type = "text" id="employee_name"  disabled /> <input type="button" value="..." onclick="employeesPopup();"> <br />
 

@@ -149,4 +149,8 @@ public class Request {
     public boolean inWork() {
         return status == RequestStatus.NEW || status == RequestStatus.ASSIGNED;
     }
+
+    public void close() {
+        this.status = RequestStatus.CLOSED;
+    }
 }
