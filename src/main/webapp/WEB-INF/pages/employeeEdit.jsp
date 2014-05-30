@@ -5,9 +5,18 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta charset="UTF-8" />
-    <title>Редактировать данные сотрудника ${personBean.person.firstName}</title>
+    <title>
+        Данные сотрудника -
+        <c:if test="${personBean.persisted}">
+            ${personBean.person.lastName} ${personBean.person.firstName} ${personBean.person.middleName}
+        </c:if>
+        <c:if test="${!personBean.persisted}">
+            Новый сотрудник
+        </c:if>
+    </title>
 
     <script type="text/javascript" src="<c:url value="/resources/js/jquery-2.1.1.min.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/bootstrap.min.js" /> "></script>
 
     <script type="text/javascript">
         function addContact() {
@@ -68,119 +77,175 @@
             });
         }
 
+        $('#tabs a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+
+
     </script>
 
 </head>
 <body>
+<ul class="nav nav-tabs" id="tabs">
+    <li class="active">
+        <a href="#personal_data" data-toggle="tab">Персональные данные</a>
+    </li>
+    <li>
+        <a href="#contacts" data-toggle="tab">Контакты</a>
+    </li>
+    <li>
+        <a href="#schedules" data-toggle="tab">График работы</a>
+    </li>
+</ul>
 
-    <form:form commandName="personBean" action="/employee/save/" acceptCharset="UTF-8" cssClass="form-horizontal">
+<div id="tab_content" class="tab-content">
+    <div class="tab-pane fade active in" id="personal_data">
+        <p>
+        <form:form commandName="personBean" action="/employee/save/" acceptCharset="UTF-8" cssClass="form-horizontal">
 
-        <form:hidden path="persisted" />
+            <form:hidden path="persisted"/>
 
-        <div class="form-group">
-            <label for="person_id" class="col-sm-2 control-label">ID</label>
-            <div class="col-sm-10">
-                <form:input path="person.id" readonly="true" id="person_id" cssClass="form-control" />
+            <div class="form-group">
+                <label for="person_id" class="col-sm-2 control-label">ID</label>
+
+                <div class="col-sm-10">
+                    <form:input path="person.id" readonly="true" id="person_id" cssClass="form-control"/>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="person_last_name" class="col-sm-2 control-label">Фамилия</label>
-            <div class="col-sm-10">
-                <form:input path="person.lastName" id="person_last_name" cssClass="form-control"/>
-             </div>
-        </div>
+            <div class="form-group">
+                <label for="person_last_name" class="col-sm-2 control-label">Фамилия</label>
 
-        <div class="form-group">
-            <label for="person_first_name" class="col-sm-2 control-label">Имя</label>
-            <div class="col-sm-10">
-                <form:input path="person.firstName" id="person_first_name" cssClass="form-control" />
+                <div class="col-sm-10">
+                    <form:input path="person.lastName" id="person_last_name" cssClass="form-control"/>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="person_middle_name" class="col-sm-2 control-label">Отчество</label>
-            <div class="col-sm-10">
-                <form:input path="person.middleName" id="person_middle_name" cssClass="form-control" />
+            <div class="form-group">
+                <label for="person_first_name" class="col-sm-2 control-label">Имя</label>
+
+                <div class="col-sm-10">
+                    <form:input path="person.firstName" id="person_first_name" cssClass="form-control"/>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="person_email" class="col-sm-2 control-label">E-mail</label>
-            <div class="col-sm-10">
-                <form:input path="person.email" id="person_email" cssClass="form-control" />
+            <div class="form-group">
+                <label for="person_middle_name" class="col-sm-2 control-label">Отчество</label>
+
+                <div class="col-sm-10">
+                    <form:input path="person.middleName" id="person_middle_name" cssClass="form-control"/>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <input type="submit" value="Сохранить" class="btn btn-primary"/>
-        </div>
+            <div class="form-group">
+                <label for="person_email" class="col-sm-2 control-label">E-mail</label>
 
-    </form:form>
+                <div class="col-sm-10">
+                    <form:input path="person.email" id="person_email" cssClass="form-control"/>
+                </div>
+            </div>
 
-    <h2>Контакты</h2>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="submit" value="Сохранить" class="btn btn-primary"/>
+                </div>
+            </div>
+        </p>
 
-    <table id="contactList">
-        <thead>
-        <tr>
-            <td>Тип</td>
-            <td>Значеие</td>
-            <td>Действия</td>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach items="${personBean.person.contacts}" var="contact">
+        </form:form>
+    </div>
+
+    <div class="tab-pane fade" id="contacts">
+
+        <table id="contactList" class="table table-hover">
+            <thead>
             <tr>
-                <td>${contact.type}</td>
-                <td>${contact.value}</td>
-                <td></td>
+                <td>Тип</td>
+                <td>Значение</td>
+                <td>Действия</td>
             </tr>
-        </c:forEach>
-        </tbody>
-        <tfoot>
-        <tr>
-            <td>
-                <input type="text" id="contactType"  <c:if test="${!personBean.persisted}"><c:out value="disabled='disabled'"/></c:if> />
-            </td>
-            <td>
-                <input type="text" id="contactValue" <c:if test="${!personBean.persisted}"><c:out value="disabled='disabled'"/></c:if>/>
-            </td>
-            <td>
-                <input type="button" name="saveContact" onclick="addContact();" value="+" <c:if test="${!personBean.persisted}"><c:out value="disabled='disabled'"/></c:if>/>
-            </td>
-        </tr>
-        </tfoot>
-    </table>
-
-    <h2>Графики работы</h2>
-
-    <table id="scheduleList">
-        <thead>
-        <tr>
-            <td>Наименование</td>
-            <td>Действия</td>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach items="${personBean.person.workSchedules}" var="schedule">
+            </thead>
+            <tbody>
+            <c:forEach items="${personBean.person.contacts}" var="contact">
+                <tr>
+                    <td>${contact.type}</td>
+                    <td>${contact.value}</td>
+                    <td></td>
+                </tr>
+            </c:forEach>
+            </tbody>
+            <tfoot>
             <tr>
                 <td>
-                    <a href="schedule/${schedule.businessCode}/">${schedule.name}</a>
+                    <input type="text" id="contactType"  <c:if test="${!personBean.persisted}"><c:out
+                            value="disabled='disabled'"/></c:if> />
+                </td>
+                <td>
+                    <input type="text" id="contactValue" <c:if test="${!personBean.persisted}"><c:out
+                            value="disabled='disabled'"/></c:if>/>
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-xs" onclick="addContact();" <c:if
+                            test="${!personBean.persisted}"><c:out value="disabled='disabled'"/></c:if>>
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
                 </td>
             </tr>
-        </c:forEach>
-        </tbody>
-        <tfoot>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="tab-pane fade" id="schedules">
+
+        <table id="scheduleList" class="table table-hover">
+            <thead>
+            <tr>
+                <td>Наименование</td>
+                <td>Действия</td>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${personBean.person.workSchedules}" var="schedule">
+                <tr>
+                    <td>
+                        <a href="schedule/${schedule.businessCode}/">${schedule.name}</a>
+                    </td>
+                    <td>
+                        <a href="#" class="btn btn-danger btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span> Удалить
+                        </a>
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+            <tfoot>
             <tr>
                 <td>
-                    <input type="text" id="scheduleName" />
+                    <div class="form-group">
+                        <label for="scheduleName" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <input type="text" id="scheduleName" class="form-control"
+                                   placeholder="Имя (рекомендуется называть по имени месяца)"
+                                    <c:if test="${!personBean.persisted}"><c:out
+                                    value="disabled='disabled'"/></c:if>/>
+                        </div>
+                    </div>
                 </td>
                 <td>
-                    <input type="button" name="saveSchedule" onclick="addSchedule();" value="+" />
+                    <button name="saveSchedule" onclick="addSchedule();"
+                            class="btn btn-primary btn-xs"
+                            <c:if test="${!personBean.persisted}"><c:out
+                                    value="disabled='disabled'"/></c:if>>
+                        <span class="glyphicon glyphicon-plus"></span> Добавить
+                    </button>
                 </td>
             </tr>
-        </tfoot>
-    </table>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
 
 </body>
 </html>

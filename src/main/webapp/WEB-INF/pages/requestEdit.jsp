@@ -5,12 +5,26 @@
 <head>
     <title>Заявка на обслуживание ${requestBean.request.title}</title>
     <link rel="stylesheet" href="<c:url value="/resources/css/calendar.css" /> " />
+    <style type="text/css">
+        .left-inner-addon {
+            position: relative;
+        }
+        .left-inner-addon input {
+            padding-left: 30px;
+        }
+        .left-inner-addon i {
+            position: absolute;
+            padding: 10px 12px;
+            pointer-events: none;
+        }
+    </style>
     <script type="text/javascript" src="<c:url value="/resources/js/jquery-1.7.2.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/jquery.ui.core.js" /> "></script>
     <script type="text/javascript" src="<c:url value="/resources/js/jquery.ui.datepicker.js"/>"></script>
     <script type="text/javascript">
 
         $(function(){
+            $('#msg').css('visibility', 'hidden');
             var today = new Date();
             $('#targetDate').datepicker();
             $('#dueDate').datepicker();
@@ -21,7 +35,11 @@
         });
 
         function employeesPopup(){
-            $("#msg").html('Загрузка списка сотрудников...');
+            $('#msg').css('visibility', 'visible');
+            $("#msg").removeClass('alert-success')
+                    .removeClass('alert-danger')
+                    .addClass('alert-info')
+                    .html('Загрузка списка сотрудников...');
             $.ajax({
                 type: 'post',
                 url: 'free_employees/',
@@ -34,10 +52,13 @@
                         $("#employee_id").val(id);
                         selectAssignee();
                     };
-                    $("#msg").html('');
+                    $("#msg").html('').css('visibility', 'hidden');
                 },
                 error: function() {
-                    $("#msg").html('Cannot open popup');
+                    $("#msg").removeClass('alert-info')
+                            .removeClass('alert-success')
+                            .addClass('alert-danger')
+                            .html('Невозможно открыть список');
                 }
             });
         }
@@ -54,7 +75,10 @@
                     $("#employee_name").val(fullName);
                 },
                 error: function() {
-                    $("#msg").html('Cannot get assignee info');
+                    $("#msg").removeClass('alert-success')
+                            .removeClass('alert-info')
+                            .addClass('alert-danger')
+                            .html('Cannot get assignee info');
                 }
             });
         }
@@ -63,32 +87,75 @@
 </head>
 <body>
 
-    <div id="msg"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group">
+                <input type="button" class="btn btn-danger" value="Отказать" <c:if test="${!requestBean.closed}">disabled="disabled" </c:if> />
+                <input type="button" class="btn btn-primary" value="Завершить" <c:if test="${!requestBean.closed}">disabled="disabled" </c:if>/>
+                <input type="button" class="btn btn-success" value="Закрыть" <c:if test="${!requestBean.closed}">disabled="disabled" </c:if>/>
+                <input type="button" class="btn btn-primary" value="Открыть" <c:if test="${requestBean.closed}">disabled="disabled" </c:if>/>
+            </div>
+        </div>
+    </div>
 
-    <input type="button" value="Отказать" <c:if test="${!requestBean.closed}">disabled="disabled" </c:if> />
-    <input type="button" value="Завершить" <c:if test="${!requestBean.closed}">disabled="disabled" </c:if>/>
-    <input type="button" value="Закрыть" <c:if test="${!requestBean.closed}">disabled="disabled" </c:if>/>
-    <input type="button" value="Открыть" <c:if test="${requestBean.closed}">disabled="disabled" </c:if>/>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="msg" class="alert"></div>
+        </div>
+    </div>
 
-    <form:form commandName="requestBean" method="post" action="/request/save/">
+    <div class="row">
 
-        <form:hidden path="persisted" />
+        <form:form commandName="requestBean" method="post" action="/request/save/" cssClass="form-horizontal">
 
-        Заголовок <form:input path="request.title" /> <br />
+            <form:hidden path="persisted" />
 
-        Краткое описание<form:textarea path="request.description" /> <br />
+            <div class="form-group">
+                <label for="request_title" class="col-sm-2 control-label">Заголовок</label>
+                <div class="col-sm-10">
+                    <form:input path="request.title" id="request_title" cssClass="form-control"/>
+                </div>
+            </div>
 
-        Желаемая дата <form:input path="targetDate" id="targetDate" readonly="true" /> <br />
+            <div class="form-group">
+                <label for="request_description" class="col-sm-2 control-label">Краткое описание</label>
+                <div class="col-sm-10">
+                    <form:textarea path="request.description" id="request_description" cssClass="form-control"/>
+                </div>
+            </div>
 
-        Крайний срок <form:input path="dueDate" id="dueDate" readonly="true" /> <br />
+            <div class="form-group">
+                <label for="targetDate" class="col-sm-2 control-label">Желаемая дата</label>
+                <div class="col-sm-10">
+                    <form:input path="targetDate" id="targetDate" readonly="true" cssClass="form-control" />
+                </div>
+            </div>
 
-        <form:hidden path="assignee" id="employee_id" />
+            <div class="form-group">
+                <label for="dueDate" class="col-sm-2 control-label">Крайний срок</label>
+                <div class="col-sm-10">
+                    <form:input path="dueDate" id="dueDate" readonly="true" cssClass="form-control" />
+                </div>
+            </div>
 
-        Сотрудник <input type = "text" id="employee_name"  disabled /> <input type="button" value="..." onclick="employeesPopup();"> <br />
+            <form:hidden path="assignee" id="employee_id" />
 
-        <input type="submit" value="Сохранить" />
+            <div class="form-group">
+                <label for="employee_name" class="col-sm-2 control-label">Сотрудник</label>
+                <div class="col-sm-8">
+                    <input type = "text" id="employee_name" class="form-control" disabled />
+                </div>
+                <div class="col-sm-2 left-inner-addon">
+                    <i class="glyphicon glyphicon-list"></i>
+                    <input type="button" onclick="employeesPopup();" class="btn btn-primary" value="Подбор">
+                </div>
+            </div>
 
-    </form:form>
+            <input type="submit" value="Сохранить" class="btn btn-primary" />
+
+        </form:form>
+
+    </div>
 
 </body>
 </html>

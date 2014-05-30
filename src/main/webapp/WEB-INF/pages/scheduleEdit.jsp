@@ -11,16 +11,29 @@
     <script>
         $(function(){
             $('#calendar').multiDatesPicker();
+            $('#msg').css('visibility', 'hidden');
         });
 
-        //TODO: implement dates pick on page load
+        receiveDates();
+
+        function msgVisibility() {
+            if ($('#msg').css('visibility') == 'hidden') {
+                $('#msg').css('visibility', 'visible');
+            } else {
+                $('#msg').css('visibility', 'hidden');
+            }
+        }
 
         function retrieveDates() {
             return $('#calendar').multiDatesPicker('getDates');
         }
 
         function sendDates() {
-            $("#msg").html("Подождите...");
+            $('#msg').css('visibility', 'visible');
+            $("#msg").removeClass("alert-success")
+                    .removeClass("alert-danger")
+                    .addClass("alert-info")
+                    .html("Подождите...").fadeIn('slow');
             $.ajax({
                 type: "post",
                 url: 'add_dates',
@@ -28,10 +41,16 @@
                     'dates' : retrieveDates()
                 },
                 success: function(response) {
-                    $("#msg").html(response.schedule.name + " saved");
+                    $("#msg").removeClass("alert-danger")
+                            .removeClass("alert-info")
+                            .addClass("alert-success").fadeIn('slow');
+                    $("#msg").html("График '" + response.schedule.name + "' сохранен.");
                 },
                 error: function() {
-                    $("#msg").html("Cannot save schedule data.");
+                    $("#msg").removeClass("alert-info")
+                            .removeClass("alert-success")
+                            .addClass("alert-danger").fadeIn('slow');
+                    $("#msg").html("Неудачная попытка сохранения.");
                 }
             });
         }
@@ -55,11 +74,51 @@
 </head>
 <body onload="receiveDates();">
 
-    <div id="msg"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="msg" class="alert"></div>
+    </div>
+</div>
 
-    <div id="calendar"></div>
+<div class="row">
 
-    <input type="button" value="Check dates" onclick="sendDates();" />
+    <div class="col-md-2"></div>
+
+    <div class="col-md-4">
+
+        <div id="calendar"></div>
+
+    </div>
+
+    <div class="col-md-2"></div>
+
+    <div class="col-md-4">
+        <p>
+            Выберите нужные даты в графике и нажмите кнопку "Сохранить". Рекомендуемый размер графика - 1 месяц, но
+            технически система разрешает любой размер.
+        </p>
+
+        <p>
+            При возникновении вопросов и/или неполадок, обратитесь к системному администратору.
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6"></div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <input type="button" value="Сохранить" onclick="sendDates();" class="btn btn-primary"/>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+</div>
 
 </body>
 </html>

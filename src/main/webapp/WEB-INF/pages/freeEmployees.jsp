@@ -13,11 +13,17 @@
 </head>
 <body>
 <input type="hidden" id="selected_employee_id">
-<table>
+<table class="table table-hover">
     <tr>
-        <td>Имя</td>
-        <td>E-mail</td>
-        <td>Выбор</td>
+        <td>
+            <strong>Имя</strong>
+        </td>
+        <td>
+            <strong>E-mail</strong>
+        </td>
+        <td>
+            <strong>Выбрать</strong>
+        </td>
     </tr>
     <c:forEach items="${employeesList}" var="employee">
         <tr>
@@ -28,7 +34,9 @@
                 <c:out value="${employee.email}" />
             </td>
             <td>
-                <input type="button" value="+" onclick="selectEmployee(${employee.id});"/>
+                <button onclick="selectEmployee(${employee.id});" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
             </td>
         </tr>
     </c:forEach>
