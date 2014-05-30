@@ -1,4 +1,5 @@
 <%@ taglib prefix="decorator" uri="http://www.opensymphony.com/sitemesh/decorator" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
@@ -24,7 +25,9 @@
         <div class="collapse navbar-collapse">
             <a class="navbar-brand"><img src="/resources/img/logo_brand.png"/></a>
             <ul class="nav navbar-nav">
-                <li><a href="/employee/">Сотрудники</a></li>
+                <security:authorize access="isAuthenticated() and hasRole('ROLE_ADMIN')">
+                    <li><a href="/employee/">Сотрудники</a></li>
+                </security:authorize>
                 <li><a href="/request/new/">Завести заявку</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">

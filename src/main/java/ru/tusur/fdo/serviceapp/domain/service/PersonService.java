@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.tusur.fdo.serviceapp.domain.Contact;
 import ru.tusur.fdo.serviceapp.domain.Person;
+import ru.tusur.fdo.serviceapp.domain.Role;
 import ru.tusur.fdo.serviceapp.domain.WorkSchedule;
 import ru.tusur.fdo.serviceapp.ds.dto.PersonDTO;
 import ru.tusur.fdo.serviceapp.ds.repo.PersonRepository;
@@ -48,7 +49,9 @@ public class PersonService {
     }
 
     public Person getById(int id) {
-        Person employee = mapper.map(repository.findOne(id), Person.class);
+        PersonDTO dto = repository.findOne(id);
+        Person employee = mapper.map(dto, Person.class);
+        employee.setRole(Role.valueOf(dto.getRole()));
         List<Contact> contacts = contactService.employeeContacts(employee);
         contacts.forEach(employee::addContact);
         Collection<WorkSchedule> schedules = scheduleService.getEmployeeSchedules(employee);

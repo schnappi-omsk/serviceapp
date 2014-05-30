@@ -151,7 +151,11 @@
                 </div>
             </div>
 
-            <input type="submit" value="Сохранить" class="btn btn-primary" />
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="submit" value="Сохранить" class="btn btn-primary" />
+                </div>
+            </div>
 
         </form:form>
 

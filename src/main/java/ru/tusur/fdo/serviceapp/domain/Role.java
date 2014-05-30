@@ -5,15 +5,8 @@ package ru.tusur.fdo.serviceapp.domain;
  * version 1.0
  * Initial creation
  */
-public class Role {
+public enum  Role {
 
-    private String name;
+    ROLE_ADMIN, ROLE_ENGINEER, ROLE_DISPATCHER
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
