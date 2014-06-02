@@ -30,6 +30,8 @@ public class RequestDTO {
 
     private Date targetDate;
 
+    private String address;
+
     private String status;
 
     public int getId() {
@@ -62,6 +64,14 @@ public class RequestDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Date getCreationDate() {

@@ -25,19 +25,19 @@
         <div class="collapse navbar-collapse">
             <a class="navbar-brand"><img src="/resources/img/logo_brand.png"/></a>
             <ul class="nav navbar-nav">
+                <li><a href="/request/new/">Завести заявку</a></li>
                 <security:authorize access="isAuthenticated() and hasRole('ROLE_ADMIN')">
                     <li><a href="/employee/">Сотрудники</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Заявки <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">По датам</a></li>
+                            <li><a href="#">По инженерам</a></li>
+                        </ul>
+                    </li>
                 </security:authorize>
-                <li><a href="/request/new/">Завести заявку</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        Заявки <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">По датам</a></li>
-                        <li><a href="#">По инженерам</a></li>
-                    </ul>
-                </li>
             </ul>
         </div>
     </div>
@@ -55,8 +55,14 @@
         <div class="col-md-4">
             <blockquote>
                 <h2>Sidebar</h2>
-                <footer>Чем-то нужно заполнить</footer>
             </blockquote>
+            <h2>Добро пожаловать!</h2>
+            <p>
+                <security:authorize access="isAuthenticated()">
+                    Вы вошли как
+                    <strong><security:authentication property="name" /></strong>
+                </security:authorize>
+            </p>
         </div>
     </div>
 </div>

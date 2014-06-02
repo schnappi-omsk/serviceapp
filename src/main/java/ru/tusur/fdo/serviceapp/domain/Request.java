@@ -32,6 +32,8 @@ public class Request {
 
     private Customer customer;
 
+    private String address;
+
     public Request() {
         creationDate = LocalDate.now();
         status = RequestStatus.NEW;
@@ -71,6 +73,14 @@ public class Request {
 
     public void setAssignee(Person assignee) {
         this.assignee = assignee;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public LocalDate getCreationDate() {

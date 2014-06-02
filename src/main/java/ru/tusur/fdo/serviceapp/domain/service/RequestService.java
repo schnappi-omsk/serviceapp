@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.tusur.fdo.serviceapp.domain.Person;
 import ru.tusur.fdo.serviceapp.domain.Request;
+import ru.tusur.fdo.serviceapp.domain.RequestStatus;
 import ru.tusur.fdo.serviceapp.domain.service.notification.Notifier;
 import ru.tusur.fdo.serviceapp.ds.dto.PersonDTO;
 import ru.tusur.fdo.serviceapp.ds.dto.RequestDTO;
@@ -12,10 +13,7 @@ import ru.tusur.fdo.serviceapp.ds.repo.RequestRepository;
 import ru.tusur.fdo.serviceapp.util.DateUtils;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +31,8 @@ public class RequestService {
 
     private static final String MAIL_BODY = "Уважаемый %s %s %s! <br /> <br />" +
             "На вас назначили заявку \"%s\". <br />" +
+            "Детали заявки: <br /> <br /> %s <br /> <br />" +
+            "Проехать по адресу %s <br />" +
             "Желаемая дата исполнения - %s <br /> " +
             "Крайний срок исполнения - %s <br /> " +
             "<br />" +
@@ -63,6 +63,35 @@ public class RequestService {
         return result;
     }
 
+    public List<Request> requestsInRange(LocalDate from, LocalDate to) {
+        java.sql.Date storedFrom = DateUtils.sqlDateFromLocal(from);
+        java.sql.Date storedTo = DateUtils.sqlDateFromLocal(to);
+        List<RequestDTO> queryResult = repository.findByTargetDateBetween(storedFrom, storedTo);
+        List<Request> result = new ArrayList<>();
+        queryResult.forEach(r -> result.add(mapRequest(r)));
+        return Collections.unmodifiableList(result);
+    }
+
+    public List<Request> requestsInRangeByEmployee(LocalDate from, LocalDate to, Person employee) {
+        List<Request> allRequestsInRange = requestsInRange(from, to);
+        return allRequestsInRange.stream()
+                .filter(r -> r.getAssignee().getId() == employee.getId())
+                .collect(Collectors.toList());
+    }
+
+    public List<Request> requestsByStatus(RequestStatus status) {
+        List<RequestDTO> storedRequests = repository.findByStatus(status.name());
+        List<Request> result = new ArrayList<>();
+        storedRequests.forEach(r -> result.add(mapRequest(r)));
+        return Collections.unmodifiableList(result);
+    }
+
+    public List<Request> overdueRequests() {
+        List<Request> assignedRequests = requestsByStatus(RequestStatus.ASSIGNED);
+        return assignedRequests.stream()
+                .filter(r -> r.getDueDate().isBefore(LocalDate.now())).collect(Collectors.toList());
+    }
+
     public Request getById(int id) {
         return mapRequest(repository.findOne(id));
     }
@@ -76,6 +105,7 @@ public class RequestService {
         RequestDTO dto = newRecord ? new RequestDTO() : repository.findOne(request.getId());
         dto.setTitle(request.getTitle());
         dto.setDescription(request.getDescription());
+        dto.setAddress(request.getAddress());
         dto.setCreationDate(DateUtils.sqlDateFromLocal(request.getCreationDate()));
         dto.setTargetDate(DateUtils.sqlDateFromLocal(request.getTargetDate()));
         dto.setDueDate(DateUtils.sqlDateFromLocal(request.getDueDate()));
@@ -88,6 +118,8 @@ public class RequestService {
                 result.getAssignee().getFirstName(),
                 result.getAssignee().getMiddleName(),
                 result.getTitle(),
+                request.getDescription(),
+                request.getAddress(),
                 DateUtils.stringFromLocalDate(result.getTargetDate()),
                 DateUtils.stringFromLocalDate(result.getDueDate())
                 );
@@ -108,6 +140,7 @@ public class RequestService {
         Request dest = new Request();
         dest.setId(dto.getId());
         dest.setCreationDate(DateUtils.localFromSqlDate(dto.getCreationDate()));
+        dest.setAddress(dto.getAddress());
         dest.setTargetDate(DateUtils.localFromSqlDate(dto.getTargetDate()));
         dest.setDueDate(DateUtils.toLocalDate(dto.getDueDate()));
         dest.setTitle(dto.getTitle());
