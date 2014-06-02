@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=utf-8" language="java" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -19,6 +20,11 @@
     <script type="text/javascript" src="<c:url value="/resources/js/bootstrap.min.js" /> "></script>
 
     <script type="text/javascript">
+
+        $(function(){
+            $('#person_password').val($('#confirm_password').val());
+        })
+
         function addContact() {
             $.ajax({
                 type: "post",
@@ -82,8 +88,44 @@
             $(this).tab('show');
         });
 
-
     </script>
+
+    <security:authorize access="isAuthenticated() and hasRole('ROLE_ADMIN')">
+    <script>
+        function enableChangeCredentials() {
+            $('#person_username').prop('disabled', false).prop('readonly', '');
+            $('#person_password').prop('disabled', false).prop('readonly', '').val('');
+            $('#confirm_password').prop('disabled', false).prop('readonly', '').val('');
+        }
+
+        function beforeSend() {
+            if ($('#person_password').prop('disabled') == false) {
+                if ($('#person_username').val() == '') {
+                    alert("Логин не может быть пустым");
+                    return false;
+                }
+                if ($("#person_password").val() == '') {
+                    alert("Пароль не может быть пустым");
+                    return false;
+                }
+                if ($('#person_password').val() == $('#confirm_password').val() && $('#person_password').val() != '') {
+                    return true;
+                } else {
+                    alert("Пароль и подтверждение пароля не совпадают");
+                    return false;
+                }
+            } else return true;
+        }
+    </script>
+    </security:authorize>
+
+    <security:authorize access="isAuthenticated() and !hasRole('ROLE_ADMIN')">
+        <script>
+        function beforeSend() {
+            return true;
+        }
+        </script>
+    </security:authorize>
 
 </head>
 <body>
@@ -102,7 +144,7 @@
 <div id="tab_content" class="tab-content">
     <div class="tab-pane fade active in" id="personal_data">
         <p>
-        <form:form commandName="personBean" action="/employee/save/" acceptCharset="UTF-8" cssClass="form-horizontal">
+        <form:form commandName="personBean" action="/employee/save/" acceptCharset="UTF-8" cssClass="form-horizontal" id="personForm" onsubmit="beforeSend();">
 
             <form:hidden path="persisted"/>
 
@@ -143,6 +185,46 @@
 
                 <div class="col-sm-10">
                     <form:input path="person.email" id="person_email" cssClass="form-control"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="person_username" class="col-sm-2 control-label">Логин</label>
+                <security:authorize access="isAuthenticated() and hasRole('ROLE_ADMIN')">
+                    <div class="col-sm-8">
+                        <form:input path="person.username" id="person_username" cssClass="form-control" readonly="true"/>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="button" value="Сменить" onclick="enableChangeCredentials();" class="btn btn-primary">
+                    </div>
+                </security:authorize>
+                <security:authorize access="isAuthenticated() and !hasRole('ROLE_ADMIN')">
+                    <div class="col-sm-10">
+                        <form:input path="person.username" id="person_username" cssClass="form-control" readonly="true"/>
+                    </div>
+                </security:authorize>
+            </div>
+
+            <div class="form-group">
+                <label for="person_password" class="col-sm-2 control-label">Новый пароль</label>
+                <div class="col-sm-10">
+                    <form:password path="person.password" id="person_password" cssClass="form-control" readonly="true"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password" class="col-sm-2 control-label">Подтверждение пароля</label>
+                <div class="col-sm-10">
+                    <input type="password" value="${personBean.person.password}" id="confirm_password" readonly class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="person_role" class="col-sm-2 control-label">Роль в RFS</label>
+                <div class="col-sm-10">
+                    <form:select path="person.role" id="person_role" cssClass="form-control">
+                        <form:options items="${personBean.person.role.declaringClass}" />
+                    </form:select>
                 </div>
             </div>
 

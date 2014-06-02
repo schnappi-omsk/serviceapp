@@ -24,7 +24,7 @@
     <div class="navbar-inner">
         <div class="collapse navbar-collapse">
             <a class="navbar-brand"><img src="/resources/img/logo_brand.png"/></a>
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav navbar-left">
                 <li><a href="/request/new/">Завести заявку</a></li>
                 <security:authorize access="isAuthenticated() and hasRole('ROLE_ADMIN')">
                     <li><a href="/employee/">Сотрудники</a></li>
@@ -33,10 +33,17 @@
                             Заявки <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">По датам</a></li>
-                            <li><a href="#">По инженерам</a></li>
+                            <li><a href="/report/period/">По датам</a></li>
+                            <li><a href="/report/employee/">По инженерам</a></li>
                         </ul>
                     </li>
+                </security:authorize>
+                <security:authorize access="isAuthenticated()">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="/j_spring_security_logout">Выйти</a>
+                        </li>
+                    </ul>
                 </security:authorize>
             </ul>
         </div>

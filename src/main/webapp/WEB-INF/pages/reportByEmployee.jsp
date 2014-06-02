@@ -17,18 +17,50 @@
             $('#dateTo').val(nowString).datepicker();
         });
 
-        function getReport() {
+        function employeesPopup() {
             $.ajax({
                 type: 'post',
-                url: 'get',
-                data: {
-                    'dateFrom': $("#dateFrom").val(),
-                    'dateTo': $("#dateTo").val(),
-                    'employeeId': 1
+                url: '/employee/pick/',
+                success: function(response){
+                    var popupWin = window.open('', 'Подбор сотрудника', '');
+                    popupWin.document.write(response);
+                    popupWin.onbeforeunload = function(){
+                        var id = popupWin.$('#personId').val();
+                        $('#employeeId').val(id);
+                        getEmployee(id);
+                    }
                 },
-                success: function(response){},
-                error: alert('Ошибка при генерации отчета')
+                error: function(){
+                    alert("Ошибка при получении списка сотрудников");
+                }
             });
+        }
+
+        function getEmployee(id){
+            $.ajax({
+                type: 'post',
+                url: '/employee/get/',
+                data: {
+                    'employeeId': $('#employeeId').val()
+                },
+                success: function(response) {
+                    var employeeName = response.person.lastName + " "
+                        + response.person.firstName + " "
+                        + response.person.middleName;
+                    $('#employeeName').val(employeeName);
+                },
+                error: function(){
+                    alert('Ошибка при получении данных сотрудника');
+                }
+            });
+        }
+
+        function toggleButton() {
+            if ($('#employeeId').val() == undefined || $('#employeeId').val() == ''){
+                $('#getReport').prop('disabled', true);
+            } else {
+                $('#getReport').prop('disabled', false);
+            }
         }
 
     </script>
@@ -39,15 +71,15 @@
 
         <h2>Поиск заявок</h2>
 
-        <input type="hidden" name="employeeId">
+        <input type="hidden" name="employeeId" id="employeeId">
 
         <div class="form-group">
-            <label></label>
+            <label for="employeeName" class="control-label col-sm-2">Сотрудник</label>
             <div class="col-sm-8">
-                <input type="text" readonly class="form-control" id="employeeName" name="employeeName" />
+                <input type="text" readonly class="form-control" id="employeeName" name="employeeName"/>
             </div>
             <div class="col-sm-2">
-
+                <input type="button" value="Подбор" class="btn btn-primary" onclick="employeesPopup();">
             </div>
         </div>
 
@@ -67,7 +99,7 @@
 
         <div class="form-group">
             <div class=" col-sm-offset-2 col-sm-10">
-                <input type="submit" class="btn btn-primary" value="Получить отчет" >
+                <input type="submit" class="btn btn-primary" value="Получить отчет" id="getReport">
             </div>
         </div>
 

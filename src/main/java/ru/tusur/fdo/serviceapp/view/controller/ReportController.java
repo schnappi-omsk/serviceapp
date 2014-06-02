@@ -41,6 +41,25 @@ public class ReportController {
         return new ModelAndView("reportByEmployee");
     }
 
+    @RequestMapping("/period/")
+    public ModelAndView requestsInRange() {
+        return new ModelAndView("reportInRange");
+    }
+
+    @RequestMapping(value = "/period/get", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity getReportInPerion(HttpServletRequest req) throws IOException, DocumentException {
+        LocalDate from = DateUtils.localFromString(req.getParameter("dateFrom"));
+        LocalDate to = DateUtils.localFromString(req.getParameter("dateTo"));
+        byte[] pdfContents = service.requestsInPeriod(from, to);
+        HttpHeaders headers = new HttpHeaders();
+        String fileName = "report" + DateUtils.stringFromLocalDate(LocalDate.now()) + ".pdf";
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.setContentDispositionFormData(fileName, fileName);
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+        return new ResponseEntity<>(pdfContents, headers, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/employee/get", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity getReportByEmployees(HttpServletRequest req) throws DocumentException, IOException {

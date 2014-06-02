@@ -45,9 +45,32 @@ public class ReportService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document pdfDocument = initReport("Заявки по сотруднику", baos);
         font.setSize(12);
-        Paragraph para = new Paragraph(employee.getLastName() + " " + employee.getFirstName() + " " + employee.getMiddleName());
+        Paragraph para = new Paragraph(employee.getLastName() + " " + employee.getFirstName() + " " + employee.getMiddleName(), font);
         para.setAlignment(Element.ALIGN_CENTER);
         pdfDocument.add(para);
+        PdfPTable table = new PdfPTable(5);
+        table.addCell(paragraph("ID"));
+        table.addCell(paragraph("Заголовок"));
+        table.addCell(paragraph("Желаемая дата"));
+        table.addCell(paragraph("Крайний срок"));
+        table.addCell(paragraph("Назначена на"));
+        for (Request request : reportRequests) {
+            table.addCell(paragraph(Integer.toString(request.getId())));
+            table.addCell(paragraph(request.getTitle()));
+            table.addCell(paragraph(DateUtils.stringFromLocalDate(request.getTargetDate())));
+            table.addCell(paragraph(DateUtils.stringFromLocalDate(request.getDueDate())));
+            table.addCell(paragraph(request.getAssignee().getEmail()));
+        }
+        pdfDocument.add(table);
+        pdfDocument.close();
+        return baos.toByteArray();
+    }
+
+    public byte[] requestsInPeriod(LocalDate from, LocalDate to) throws IOException, DocumentException {
+        List<Request> reportRequests = requestService.requestsInRange(from, to);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Document pdfDocument = initReport("Заявки за период", baos);
+        font.setSize(12);
         PdfPTable table = new PdfPTable(5);
         table.addCell(paragraph("ID"));
         table.addCell(paragraph("Заголовок"));

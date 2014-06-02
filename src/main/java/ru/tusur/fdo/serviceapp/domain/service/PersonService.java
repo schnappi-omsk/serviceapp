@@ -9,6 +9,7 @@ import ru.tusur.fdo.serviceapp.domain.Role;
 import ru.tusur.fdo.serviceapp.domain.WorkSchedule;
 import ru.tusur.fdo.serviceapp.ds.dto.PersonDTO;
 import ru.tusur.fdo.serviceapp.ds.repo.PersonRepository;
+import ru.tusur.fdo.serviceapp.util.PasswordUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -65,6 +66,13 @@ public class PersonService {
     }
 
     public Person save(Person employee) {
+        Person stored = getById(employee.getId());
+        if (employee.getPassword() == null || employee.getPassword().isEmpty()) {
+            employee.setPassword(stored.getPassword());
+        } else {
+            if (!stored.getPassword().equals(employee.getPassword()))
+                employee.setPassword(PasswordUtils.md5(employee.getPassword()));
+        }
         return mapper.map(repository.save(mapper.map(employee, PersonDTO.class)), Person.class);
     }
 

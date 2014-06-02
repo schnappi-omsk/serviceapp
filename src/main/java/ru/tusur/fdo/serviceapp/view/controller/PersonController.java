@@ -138,4 +138,19 @@ public class PersonController {
         return dateList.toArray();
     }
 
+    @RequestMapping(value = "pick/", method = RequestMethod.POST)
+    public ModelAndView employeesForReport(){
+        return new ModelAndView("pickEmployees", "employeesList", service.allEmployees());
+    }
+
+    @RequestMapping(value = "get/", method = RequestMethod.POST)
+    @ResponseBody
+    public PersonBean getEmployee(HttpServletRequest req) {
+        int id = Integer.parseInt(req.getParameter("employeeId"));
+        PersonBean bean = new PersonBean();
+        bean.setPersisted(true);
+        bean.setPerson(service.getById(id));
+        return bean;
+    }
+
 }

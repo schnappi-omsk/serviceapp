@@ -45,7 +45,7 @@
                 url: 'free_employees/',
                 data: {'targetDate' : $('#targetDate').val()},
                 success: function(response) {
-                    popupWin = window.open('', 'Подбор сотрудника', '');
+                    var popupWin = window.open('', 'Подбор сотрудника', '');
                     popupWin.document.write(response);
                     popupWin.onbeforeunload = function() {
                         var id = popupWin.$("#selected_employee_id").val();
@@ -120,7 +120,14 @@
             <div class="form-group">
                 <label for="request_description" class="col-sm-2 control-label">Краткое описание</label>
                 <div class="col-sm-10">
-                    <form:textarea path="request.description" id="request_description" cssClass="form-control"/>
+                    <form:textarea path="request.description" id="request_description" cssClass="form-control" rows="6"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="request_address" class="col-sm-2 control-label">Адрес</label>
+                <div class="col-sm-10">
+                    <form:textarea path="request.address" id="request_address" cssClass="form-control" />
                 </div>
             </div>
 
