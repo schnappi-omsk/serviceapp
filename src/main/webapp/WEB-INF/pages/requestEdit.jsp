@@ -1,5 +1,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -167,6 +168,38 @@
         </form:form>
 
     </div>
+    <div class="row">
+        <security:authorize access="isAuthenticated()">
+        <div class="panel panel-default">
+            <form method="post" action="/request/${requestBean.request.id}/comment/">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Оставьте комментарий</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <textarea name="comment_text" cols="10" rows="3" class="form-control"></textarea>
+                        </div>
+                        <div class="col-sm-10">
+                            <input type="submit" value="Оставить" <c:if test="${!requestBean.persisted}">disabled="disabled" </c:if> />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        </security:authorize>
+    </div>
+
+    <c:forEach items="${requestBean.request.comments}" var="comment">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>${comment.author}</strong>, от ${comment.date}
+            </div>
+            <div class="panel-body">
+                <p>${comment.text}</p>
+            </div>
+        </div>
+    </c:forEach>
 
 </body>
 </html>

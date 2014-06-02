@@ -51,6 +51,9 @@ public class RequestService {
     private ScheduleService scheduleService;
 
     @Autowired
+    private CommentService commentService;
+
+    @Autowired
     private Notifier notifier;
 
     @Autowired
@@ -111,6 +114,7 @@ public class RequestService {
         dto.setDueDate(DateUtils.sqlDateFromLocal(request.getDueDate()));
         dto.setAssignee(mapper.map(request.getAssignee(), PersonDTO.class));
         dto.setStatus(request.getStatus().getText());
+        request.getComments().forEach(c -> commentService.addComment(c, request));
         Request result = mapRequest(repository.save(dto));
         String subj = String.format(MAIL_SUBJECT, result.getId());
         String body = String.format(MAIL_BODY,
@@ -145,6 +149,7 @@ public class RequestService {
         dest.setDueDate(DateUtils.toLocalDate(dto.getDueDate()));
         dest.setTitle(dto.getTitle());
         dest.setDescription(dto.getDescription());
+        commentService.commentsByRequest(dest).forEach(dest::addComment);
         Person employee = personService.getById(dto.getAssignee().getId());
         dest.assignTo(employee);
         return dest;

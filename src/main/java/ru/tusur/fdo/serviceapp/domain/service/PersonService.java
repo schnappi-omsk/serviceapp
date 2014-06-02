@@ -66,13 +66,15 @@ public class PersonService {
     }
 
     public Person save(Person employee) {
-        Person stored = getById(employee.getId());
-        if (employee.getPassword() == null || employee.getPassword().isEmpty()) {
-            employee.setPassword(stored.getPassword());
-        } else {
-            if (!stored.getPassword().equals(employee.getPassword()))
-                employee.setPassword(PasswordUtils.md5(employee.getPassword()));
-        }
+        if (employee.getId() != 0) {
+            Person stored = getById(employee.getId());
+            if (employee.getPassword() == null || employee.getPassword().isEmpty()) {
+                employee.setPassword(stored.getPassword());
+            } else {
+                if (!stored.getPassword().equals(employee.getPassword()))
+                    employee.setPassword(PasswordUtils.md5(employee.getPassword()));
+            }
+        } else employee.setPassword(PasswordUtils.md5(employee.getPassword()));
         return mapper.map(repository.save(mapper.map(employee, PersonDTO.class)), Person.class);
     }
 

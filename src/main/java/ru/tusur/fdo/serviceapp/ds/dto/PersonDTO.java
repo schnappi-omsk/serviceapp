@@ -25,8 +25,10 @@ public class PersonDTO {
 
     private String email;
 
+    @Column(unique = true)
     private String username;
 
+    @Column(unique = false)
     private String password;
 
     private String role;

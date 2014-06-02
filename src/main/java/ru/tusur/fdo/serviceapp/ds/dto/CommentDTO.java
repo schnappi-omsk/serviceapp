@@ -10,18 +10,22 @@ import java.sql.Date;
  * 03.06.14.
  */
 @Entity
-@Table(name = "comment")
+@Table(name = "request_comment")
 public class CommentDTO {
 
     @Id
     @GeneratedValue
     private int id;
 
-    @ManyToOne
-    private PersonDTO author;
+    private String author;
 
+    @ManyToOne
+    private RequestDTO request;
+
+    @Column(name = "comment_date")
     private java.sql.Date date;
 
+    @Column(name = "comment_text")
     private String text;
 
     public int getId() {
@@ -32,11 +36,19 @@ public class CommentDTO {
         this.id = id;
     }
 
-    public PersonDTO getAuthor() {
+    public RequestDTO getRequest() {
+        return request;
+    }
+
+    public void setRequest(RequestDTO request) {
+        this.request = request;
+    }
+
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(PersonDTO author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 

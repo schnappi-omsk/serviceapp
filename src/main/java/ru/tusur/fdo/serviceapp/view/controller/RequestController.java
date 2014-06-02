@@ -1,9 +1,11 @@
 package ru.tusur.fdo.serviceapp.view.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import ru.tusur.fdo.serviceapp.domain.Request;
 import ru.tusur.fdo.serviceapp.domain.service.PersonService;
 import ru.tusur.fdo.serviceapp.domain.service.RequestService;
 import ru.tusur.fdo.serviceapp.util.DateUtils;
@@ -91,6 +93,19 @@ public class RequestController {
         result.setPerson(personService.getById(employeeId));
         result.setPersisted(true);
         return result;
+    }
+
+    @RequestMapping(value = "/{id}/comment/", method = RequestMethod.POST)
+    public ModelAndView addComment(@PathVariable int id,
+                                   HttpServletRequest req,
+                                   @ModelAttribute RequestBean bean) {
+        String author = SecurityContextHolder.getContext().getAuthentication().getName();
+        String text = req.getParameter("comment_text");
+        LocalDate date = LocalDate.now();
+        bean.setRequest(service.getById(id));
+        bean.getRequest().addComment(author, date, text);
+        service.save(bean.getRequest());
+        return editRequest(id, bean);
     }
 
 }

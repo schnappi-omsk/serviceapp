@@ -1,6 +1,6 @@
 package ru.tusur.fdo.serviceapp.domain;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Created by schna_000 on 16.03.14.
@@ -9,11 +9,21 @@ import java.util.Date;
  */
 public class Comment {
 
+    private int id;
+
     private String text;
 
-    private Person author;
+    private String author;
 
-    private Date date;
+    private LocalDate date;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getText() {
         return text;
@@ -23,19 +33,19 @@ public class Comment {
         this.text = text;
     }
 
-    public Person getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(Person author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 }

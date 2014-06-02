@@ -127,6 +127,14 @@ public class Request {
         comments.add(comment);
     }
 
+    public void addComment(String author, LocalDate date, String text) {
+        Comment comment = new Comment();
+        comment.setAuthor(author);
+        comment.setDate(date);
+        comment.setText(text);
+        addComment(comment);
+    }
+
     public List<Attachment> getAttachments() {
         return Collections.unmodifiableList(attachments);
     }
